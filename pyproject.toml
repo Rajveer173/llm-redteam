@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llm-redteam"
+version = "0.1.0"
+description = "Automated red-team harness for LLM apps: prompt injection, data exfiltration, RAG leaks and tool misuse, scored with canaries and bootstrap confidence intervals"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Rajveer Kharadepatil" }]
+license = { text = "MIT" }
+dependencies = [
+  "typer>=0.12",
+  "httpx>=0.27",
+  "pyyaml>=6",
+  "pydantic>=2.7",
+  "numpy>=1.26",
+  "jinja2>=3.1",
+  "fastapi>=0.115",
+  "uvicorn>=0.30",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "respx>=0.21", "ruff>=0.6"]
+
+[project.scripts]
+llmrt = "llmredteam.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llmredteam"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# typer's API is built on function-call defaults; B008 is a false positive for it.
+"src/llmredteam/cli.py" = ["B008"]
+# test readability beats an 110-char cap on a few asyncio.run(...) lines.
+"tests/*" = ["E501"]
+# report.py embeds an HTML/Jinja template with long lines that are clearer left intact.
+"src/llmredteam/report.py" = ["E501"]
