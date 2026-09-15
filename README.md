@@ -77,8 +77,36 @@ on — so the harness produces a before/after ASR for the gateway's defenses.
 
 ## Results
 
-Populated by `llmrt run configs/models.yaml` on the local model set; the headline table and `runs/<id>/report.html`
-go here once the full sweep has run. Numbers are committed under `runs/` so every figure traces to raw trial data.
+From `llmrt run configs/headline.yaml` — 3 local models × 3 defenses × the direct-injection pack × 3 mutators ×
+{English, Hindi} × 2 repeats = **342 trials**. Raw data and the HTML report are committed under
+[`runs/20260915T134645Z/`](runs/20260915T134645Z), so every number below traces to a trial row. Overall ASR
+**19.9%** (95% CI 15.8–24.3%).
+
+**Defenses** — a hardened system prompt barely helps; filtering the *output* is what works:
+
+| defense | ASR | 95% CI |
+|---|---:|---|
+| none | 31.6% | 23.7–40.4% |
+| hardened_prompt | 28.1% | 20.2–36.8% |
+| output_filter | **0.0%** | 0.0–0.0% |
+
+**Evasion** — wrapping the attack cuts through only if the model can unwrap it. These small models can't decode
+base64, so that wrapper *lowers* success; the plain attack is the strongest:
+
+| mutator | ASR |
+|---|---:|
+| identity | 45.2% |
+| payload_split | 10.2% |
+| base64 | 0.0% |
+
+**Language** — Hindi attacks succeeded **44.4%** vs **18.5%** for English: guardrails and refusal training are
+weaker outside English, which connects directly to the tokenization gap measured in
+[tokfair](https://github.com/Rajveer173/Tokfair).
+
+**Models** — `llama3.2:1b` refused far more often (6.1% ASR) than `qwen2.5:0.5b` (26.3%) or `gemma2:2b` (27.2%).
+
+Reproduce: `llmrt run configs/headline.yaml` (or `configs/models.yaml` for the full 5-defense, 5-mutator sweep,
+which is slow on a small GPU).
 
 ## Ethics
 
