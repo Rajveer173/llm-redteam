@@ -1,0 +1,11 @@
+# The headline experiment: several local models × all defenses × all direct/indirect attacks,
+# with mutators and Hindi/Marathi variants, repeated for confidence intervals.
+targets:
+  - { type: ollama, model: "qwen2.5:0.5b" }
+  - { type: ollama, model: "llama3.2:1b" }
+  - { type: ollama, model: "gemma2:2b" }
+defenses: [none, hardened_prompt, input_filter, output_filter, input_output]
+packs: [direct.yaml, indirect.yaml]
+mutators: [identity, base64, leetspeak, payload_split, polite]
+languages: [en, hi, mr]
+repeats: 3

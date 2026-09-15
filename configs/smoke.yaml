@@ -1,0 +1,8 @@
+# Fast check that the whole pipeline runs. One small local model, two defenses, direct attacks only.
+targets:
+  - { type: ollama, model: "qwen2.5:0.5b" }
+defenses: [none, output_filter]
+packs: [direct.yaml]
+mutators: [identity]
+languages: [en]
+repeats: 1

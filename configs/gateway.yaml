@@ -1,0 +1,11 @@
+# Score the llm-gateway's guardrails: same attacks, guardrails off vs on.
+# Point these URLs at two demo keys (or two tenants), one with guardrails disabled and one enabled.
+# See the sibling repo: https://github.com/Rajveer173/llm-gateway
+targets:
+  - { type: http, name: "gateway:guardrails_off", url: "http://localhost:8100/chat", model: "gateway-off" }
+  - { type: http, name: "gateway:guardrails_on", url: "http://localhost:8101/chat", model: "gateway-on" }
+defenses: [none]
+packs: [direct.yaml, indirect.yaml]
+mutators: [identity, base64, payload_split]
+languages: [en, hi]
+repeats: 3
